@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign up page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 120vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1 {
+            margin-top: 0;
+            text-align: center;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 10px; 
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <form id="signUpForm">
+        <h1>Sign up page</h1>
+        <div class="form-group">
+            <input type="text" id="signupUsername" name="username" placeholder="Username" required autofocus>
+        </div>
+        <div class="form-group">
+            <input type="email" id="signupEmail" name="email" placeholder="Email" required>
+        </div>
+        <div class="form-group">
+            <input type="tel" id="signupPhone" name="phone" placeholder="Phone Number" required>
+        </div>
+        <div class="form-group">
+            <input type="number" id="signupAge" name="age" placeholder="Age" required>
+        </div>
+        <div class="form-group">
+            <select id="signupGender" name="gender" required>
+                <option value="" disabled selected>Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="custom">Custom</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input type="password" id="signupPass" name="pass" placeholder="Password" required>
+        </div>
+        <button type="button" name="submitSignUp" id="submitSignUp">Sign Up</button>
+        <button type="button" name="signIn" id="signIn">Sign In</button> <!-- Added Sign In button -->
+    </form>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        // Initialize Firebase with your project configuration
+        const firebaseConfig = {
+    apiKey: "AIzaSyBANQCHN_aSw-QBMWkM9Q3NxgEURHTM0Yg",
+    authDomain: "testapp-42fcc.firebaseapp.com",
+    projectId: "testapp-42fcc",
+    storageBucket: "testapp-42fcc.appspot.com",
+    messagingSenderId: "914467538654",
+    appId: "1:914467538654:web:b252857baf83b09dfea44f"
+};
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Sign-up functionality
+        document.getElementById('submitSignUp').addEventListener('click', async (e) => {
+            var username = document.getElementById('signupUsername').value;
+            var email = document.getElementById('signupEmail').value;
+            var password = document.getElementById('signupPass').value;
+            var phone = document.getElementById('signupPhone').value;
+            var age = document.getElementById('signupAge').value;
+            var gender = document.getElementById('signupGender').value;
+
+            try {
+                const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // Push user data to database
+                await firebase.database().ref('users/' + user.uid).set({
+                    username: username,
+                    email: email,
+                    phone: phone,
+                    age: age,
+                    gender: gender
+                });
+
+                // Alert user signup success
+                alert('User signed up successfully');
+            } catch (error) {
+                // Handle signup errors
+                const errorMessage = error.message;
+                alert(errorMessage);
+            }
+        });
+
+        // Sign-in button functionality
+        document.getElementById('signIn').addEventListener('click', (e) => {
+            window.location.href = 'login.html'; // Redirect to sign-in page
+        });
+    </script>
+</body>
+</html>
